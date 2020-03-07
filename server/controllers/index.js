@@ -1,6 +1,7 @@
 // pull in our models. This will automatically load the index.js from that folder
 const models = require('../models');
 const Cat = models.Cat.CatModel;
+const Dog = models.Dog.DogModel;
 
 // default fake data so that we have something to work with until we make a real Cat
 const defaultData = {
@@ -48,7 +49,7 @@ const hostPage1 = (req, res) => {
         
         return res.render('page1', {
             title: 'All Cats',
-            cats: docs,
+            cats: doc,
         });
     };
     
@@ -60,7 +61,22 @@ const hostPage2 = (req, res) => {
 };
 
 const hostPage3 = (req, res) => {
-  res.render('page3', {title: 'Empty Page'});
+  res.render('page3', {title: 'Add Dog'});
+};
+
+const hostPage4 = (req, res) => {
+    const callback = (err, doc) => {
+        if(err) {
+            return res.status(500).json({err});
+        }
+        
+        return res.render('page4', {
+            title: 'All Dogs',
+            dogs: doc,
+        });
+    };
+    
+    readAllDogs(req, res, callback);
 };
 
 const getName = (req, res) => {
@@ -134,6 +150,111 @@ const updateLast = (req, res) => {
     });
 };
 
+const defaultDogData = {
+  name: 'unknown',
+    breed: 'dog',
+  age: 0,
+};
+
+let lastDogAdded = new Dog(defaultData);
+
+const readAllDogs = (req, res, callback) => {
+  Dog.find(callback).lean();
+};
+
+const readDog = (req, res) => {
+  if(!req.query.name) {
+    return res.status(400).json({error: 'A name is required'});
+  }
+  
+  const name1 = req.query.name;
+  
+  const callback = (err, doc) => {
+    if(err) {
+      return res.status(500).json({err});
+    }
+    
+    return res.json(doc);
+  };
+  
+  Dog.findByName(name1, callback);
+};
+
+const getDogName = (req, res) => {
+    res.json({name: lastAddedDog.name});
+};
+
+const setDogName = (req, res) => {
+  if (!req.body.dogname || !req.body.breed || !req.body.age) {
+    return res.status(400).json({ error: 'dogname, breed and age are all required' });
+  }
+    
+    const name = req.body.dogname;
+    
+    const dogData = {
+        name,
+        breed,
+        bedsOwned: req.body.age,
+    };
+    
+    const newDog = new Dog(dogData);
+    
+    const savePromise = newDog.save();
+    
+    savePromise.then(() => {
+        lastAddedDog = newDog;
+        return res.json({
+            name: lastAddedDog.name,
+            breed: lastAddedDog.breed,
+            age: lastAddedDog.age,
+        });
+    });
+    
+    savePromise.catch((err) => {
+       return res.status(500).json({err}); 
+    });
+};
+
+const searchDogName = (req, res) => {
+  if (!req.query.name) {
+    return res.status(400).json({ error: 'Name is required to perform a search' });
+  }
+    
+    return Dog.findByName(req.query.name, (err, doc) => {
+        if(err){
+            return res.status(500).json({err});
+        }
+        
+        if(!doc) {
+            return res.status(404).json({error: 'No Dogs Found'});
+        }
+        
+        return res.json({
+            name: doc.name,
+            breed: doc.breed,
+            age: doc.age,
+        });
+    });
+};
+
+const updateLastDog = (req, res) => {
+	lastAddedDog.age++;
+    
+    const savePromise = lastAdded.save();
+    
+    savePromise.then(() => {
+        return res.json({
+            name: lastAddedDog.name,
+            breed: lastAddedDog.breed,
+            age: lastAddedDog.age,
+        });
+    });
+    
+    savePromise.catch((err) => {
+       return res.status(500).json({err}); 
+    });
+};
+
 const notFound = (req, res) => {
   res.status(404).render('notFound', {
     page: req.url,
@@ -145,10 +266,16 @@ module.exports = {
   page1: hostPage1,
   page2: hostPage2,
   page3: hostPage3,
+    page4: hostPage4,
   readCat,
   getName,
   setName,
   updateLast,
   searchName,
+    readDog,
+  getDogName,
+  setDogName,
+  updateLastDog,
+  searchDogName,
   notFound,
 };
