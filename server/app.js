@@ -15,9 +15,9 @@ const port = process.env.PORT || process.env.NODE_PORT || 3000;
 const dbURL = process.env.MONGODB_URI || 'mongodb://localhost/simpleMVCExample';
 
 const mongooseOptions = {
-  useNewUrlParser: true, 
+  useNewUrlParser: true,
   useUnifiedTopology: true,
-}
+};
 
 mongoose.connect(dbURL, mongooseOptions, (err) => {
   if (err) {
@@ -54,4 +54,3 @@ app.listen(port, (err) => {
   }
   console.log(`Listening on port ${port}`);
 });
-

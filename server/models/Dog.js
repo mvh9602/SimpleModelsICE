@@ -26,18 +26,11 @@ const DogSchema = new mongoose.Schema({
   },
 });
 
-DogSchema.statics.findDogByName = (name, callback) => {
-  return DogModel.findOne({name}, callback);
-};
+DogSchema.statics.findDogByName = (name, callback) => DogModel.findOne({ name }, callback);
 
 DogModel = mongoose.model('Dog', DogSchema);
 
 module.exports = {
   DogModel,
-  DogSchema
-}
-
-
-
-
-
+  DogSchema,
+};

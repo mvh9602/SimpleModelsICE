@@ -20,18 +20,11 @@ const CatSchema = new mongoose.Schema({
   },
 });
 
-CatSchema.statics.findByName = (name, callback) => {
-  return CatModel.findOne({name}, callback);
-};
+CatSchema.statics.findByName = (name, callback) => CatModel.findOne({ name }, callback);
 
 CatModel = mongoose.model('Cat', CatSchema);
 
 module.exports = {
   CatModel,
-  CatSchema
-}
-
-
-
-
-
+  CatSchema,
+};
