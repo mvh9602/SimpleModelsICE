@@ -156,7 +156,7 @@ const defaultDogData = {
   age: 0,
 };
 
-let lastDogAdded = new Dog(defaultData);
+let lastAddedDog = new Dog(defaultDogData);
 
 const readAllDogs = (req, res, callback) => {
   Dog.find(callback).lean();
@@ -177,7 +177,7 @@ const readDog = (req, res) => {
     return res.json(doc);
   };
   
-  Dog.findByName(name1, callback);
+  Dog.findDogByName(name1, callback);
 };
 
 const getDogName = (req, res) => {
@@ -185,16 +185,17 @@ const getDogName = (req, res) => {
 };
 
 const setDogName = (req, res) => {
-  if (!req.body.dogname || !req.body.breed || !req.body.age) {
-    return res.status(400).json({ error: 'dogname, breed and age are all required' });
+  if (!req.body.name || !req.body.breed || !req.body.age) {
+    return res.status(400).json({ error: 'name, breed, and age are all required' });
   }
     
-    const name = req.body.dogname;
+    const name = req.body.name;
+    const breed = req.body.breed;
     
     const dogData = {
         name,
         breed,
-        bedsOwned: req.body.age,
+        age: req.body.age,
     };
     
     const newDog = new Dog(dogData);
@@ -220,7 +221,7 @@ const searchDogName = (req, res) => {
     return res.status(400).json({ error: 'Name is required to perform a search' });
   }
     
-    return Dog.findByName(req.query.name, (err, doc) => {
+    return Dog.findDogByName(req.query.name, (err, doc) => {
         if(err){
             return res.status(500).json({err});
         }

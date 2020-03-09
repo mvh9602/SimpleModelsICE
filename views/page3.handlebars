@@ -10,10 +10,11 @@
   <a href="/">Home</a>
   <a href="/page1">Page 1</a>
   <a href="/page2">Page 2</a>
+  <a href="/page4">Page 4</a>
     
     <form action="/setDogName" method="POST">
-    <label for="dogname">Name:</label>
-    <input type="text" name="dogname" value="">
+    <label for="name">Name:</label>
+    <input type="text" name="name" value="">
     <label for="breed">Breed: </label>
     <input type="text" name="breed" value="">
     <label for="age">Age:</label>
@@ -32,7 +33,7 @@
   <br/>
   <br/>
   
-  <form action="findByName" method="GET">
+  <form action="findDogByName" method="GET">
     <label for="name">Name to search for:</label>
     <input type="text" name="name" value="">
     <input type="submit" value="Submit">
